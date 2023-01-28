@@ -1,0 +1,1 @@
+Controls bluetooth LEDs that connect to the "HappyLighting" android app, implementing the [triones protocol](https://github.com/madhead/saberlight/blob/master/protocols/Triones/protocol.md#built-in-modes) reverse engineered by [madhead](https://github.com/madhead).
