@@ -20,6 +20,8 @@ set(PROJECT_SOURCES
         bluetoothdialog.h
         bluetoothdialog.cpp
         bluetoothdialog.ui
+        bluetoothinterface.h
+        bluetoothinterface.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

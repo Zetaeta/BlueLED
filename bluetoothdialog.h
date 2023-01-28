@@ -1,8 +1,8 @@
 #ifndef BLUETOOTHDIALOG_H
 #define BLUETOOTHDIALOG_H
 
+#include "bluetoothinterface.h"
 #include <QDialog>
-#include <QLowEnergyCharacteristic>
 #include <map>
 #include <qbluetoothlocaldevice.h>
 
@@ -21,6 +21,7 @@ class BluetoothDialog : public QDialog {
 public:
   explicit BluetoothDialog(QWidget *parent = nullptr);
   ~BluetoothDialog();
+  std::unique_ptr<BluetoothInterface> &&getInterface();
 public slots:
   void addDevice(const QBluetoothDeviceInfo &device);
   void startScan();
@@ -30,15 +31,14 @@ public slots:
   void connectDevice(QBluetoothAddress address);
   void error(QString message);
   void info(QString message);
-  void turnOn();
+  void select();
 
 private:
   Ui::BluetoothDialog *ui;
   QBluetoothDeviceDiscoveryAgent *discoveryAgent;
   QBluetoothLocalDevice *localDevice;
   std::map<QBluetoothAddress, QBluetoothDeviceInfo> devices;
-  QLowEnergyService *writeService;
-  QLowEnergyCharacteristic writeChar;
+  std::unique_ptr<BluetoothInterface> interface;
 };
 
 #endif // BLUETOOTHDIALOG_H

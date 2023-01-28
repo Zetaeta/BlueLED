@@ -7,7 +7,6 @@
 #include <qbluetoothdevicediscoveryagent.h>
 #include <qbluetoothlocaldevice.h>
 #include <qlowenergycontroller.h>
-#include <unistd.h>
 using std::cerr;
 using std::cout;
 
@@ -27,8 +26,10 @@ BluetoothDialog::BluetoothDialog(QWidget *parent)
           &BluetoothDialog::hostModeStateChanged);
   connect(ui->scanButton, &QAbstractButton::clicked, (this),
           &BluetoothDialog::startScan);
-  connect(ui->turnonButton, &QAbstractButton::clicked, (this),
-          &BluetoothDialog::turnOn);
+  connect(ui->buttonBox, &QDialogButtonBox::accepted, (this),
+          &BluetoothDialog::select);
+  // connect(ui->turnonButton, &QAbstractButton::clicked, (this),
+  // &BluetoothDialog::turnOn);
   discoveryAgent->start();
 }
 
@@ -81,81 +82,13 @@ void BluetoothDialog::hostModeStateChanged(
 
 void BluetoothDialog::startScan() { discoveryAgent->start(); }
 
-const QBluetoothUuid WRITE_CHAR(quint16(0xffd9));
-const QBluetoothUuid STATUS_CHAR(quint16(0xffd4));
-
-const QBluetoothUuid WRITE_SERVICE(quint16(0xffd5));
-const QBluetoothUuid READ_SERVICE(quint16(0xffd0));
-
 void BluetoothDialog::connectDevice(QBluetoothAddress address) {
   auto device = devices.find(address);
   if (device == devices.end()) {
     error("missing device with address " + address.toString());
     return;
   }
-  auto controller = QLowEnergyController::createCentral(device->second);
-  connect(controller, &QLowEnergyController::errorOccurred, this,
-          [this](QLowEnergyController::Error err) {
-            Q_UNUSED(err);
-            this->error("Cannot connect to remote device.");
-          });
-  connect(controller, &QLowEnergyController::serviceDiscovered, (this),
-          [this, controller](const QBluetoothUuid &gatt) {
-            auto *service = controller->createServiceObject(gatt);
-            if (service->serviceUuid() == WRITE_SERVICE) {
-              info("write service");
-              connect(service, &QLowEnergyService::stateChanged, this,
-                      &BluetoothDialog::turnOn);
-              service->discoverDetails();
-              this->writeService = service;
-            }
-
-            this->info(QString("Service: ") +
-                       QString::number(gatt.toUInt32(), 16));
-            auto chars = service->characteristics();
-            connect(service, &QLowEnergyService::errorOccurred, this,
-                    [this](QLowEnergyService::ServiceError error) {
-                      this->error("Service error: " + QString::number(error));
-                    });
-
-            for (auto c : chars) {
-              this->info(QString("Characteristic: ") + c.uuid().toString());
-              if (c.uuid() == WRITE_CHAR) {
-                this->writeChar = c;
-              }
-            }
-          });
-
-  connect(controller, &QLowEnergyController::connected, this,
-          [this, controller]() {
-            info("Controller connected. Search services...");
-            controller->discoverServices();
-          });
-  connect(controller, &QLowEnergyController::disconnected, this,
-          [this]() { error("LowEnergy controller disconnected"); });
-  controller->connectToDevice();
-}
-void BluetoothDialog::turnOn() {
-  auto service = this->writeService;
-  if (!service) {
-    error("missing service");
-    return;
-  }
-  this->info("service state: " + QString::number(service->state()));
-  if (service->state() == QLowEnergyService::RemoteServiceDiscovered &&
-      writeChar.isValid()) {
-    sleep(1);
-    this->info("trying to turn on");
-    info("character: " + writeChar.uuid().toString());
-    info("properties: 0x" + QString::number(writeChar.properties(), 16));
-    const char bytes[] = {'\xCC', '\x24', '\x33'};
-    auto ba = QByteArray(bytes, 3);
-    service->writeCharacteristic(writeChar, ba,
-                                 QLowEnergyService::WriteWithoutResponse);
-    info("done");
-  } else {
-    error("missing service or characteristic");
-  }
+  interface = std::make_unique<BluetoothInterface>(device->second);
 }
 
 void BluetoothDialog::error(QString message) {
@@ -163,4 +96,24 @@ void BluetoothDialog::error(QString message) {
 }
 void BluetoothDialog::info(QString message) {
   cout << message.toStdString() << std::endl;
+}
+
+std::unique_ptr<BluetoothInterface> &&BluetoothDialog::getInterface() {
+  return std::move(interface);
+}
+
+void BluetoothDialog::select() {
+  auto *item = ui->list->currentItem();
+  if (item == nullptr) {
+    error("no item selected");
+    return;
+  }
+  QString label = item->text();
+  const auto i = label.indexOf(' ');
+  if (i == -1) {
+    return;
+  }
+  info(label.left(i));
+  QBluetoothAddress address(label.left(i));
+  connectDevice(address);
 }

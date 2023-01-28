@@ -52,19 +52,6 @@
     <string>Scan</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="turnonButton">
-   <property name="geometry">
-    <rect>
-     <x>300</x>
-     <y>110</y>
-     <width>80</width>
-     <height>19</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>PushButton</string>
-   </property>
-  </widget>
  </widget>
  <resources/>
  <connections>

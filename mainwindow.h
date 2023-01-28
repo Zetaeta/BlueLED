@@ -8,6 +8,7 @@ namespace Ui {
 class MainWindow;
 }
 QT_END_NAMESPACE
+QT_FORWARD_DECLARE_CLASS(BluetoothInterface)
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -19,7 +20,10 @@ public slots:
   void updateR(int r);
   void updateG(int g);
   void updateB(int b);
-  void clickButton();
+  void clickBtButton();
+  void clickColorButton();
+  void error(QString message);
+  void info(QString message);
 
 private:
   Ui::MainWindow *ui;
@@ -27,5 +31,6 @@ private:
   int g;
   int b;
   void updateColor();
+  std::unique_ptr<BluetoothInterface> interface;
 };
 #endif // MAINWINDOW_H
