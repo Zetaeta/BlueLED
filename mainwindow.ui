@@ -14,52 +14,13 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QSpinBox" name="inputR">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>440</y>
-      <width>81</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>255</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="inputG">
-    <property name="geometry">
-     <rect>
-      <x>280</x>
-      <y>440</y>
-      <width>71</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>255</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="inputB">
-    <property name="geometry">
-     <rect>
-      <x>441</x>
-      <y>440</y>
-      <width>71</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>255</number>
-    </property>
-   </widget>
    <widget class="QPushButton" name="btDialogButton">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>40</y>
-      <width>91</width>
-      <height>61</height>
+      <x>10</x>
+      <y>20</y>
+      <width>71</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -74,32 +35,19 @@
     <property name="geometry">
      <rect>
       <x>90</x>
-      <y>110</y>
-      <width>581</width>
-      <height>331</height>
+      <y>10</y>
+      <width>651</width>
+      <height>511</height>
      </rect>
     </property>
     <property name="title">
      <string>GroupBox</string>
     </property>
-    <widget class="QPushButton" name="selectColorButton">
-     <property name="geometry">
-      <rect>
-       <x>70</x>
-       <y>60</y>
-       <width>141</width>
-       <height>71</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Select color</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="onButton">
      <property name="geometry">
       <rect>
-       <x>440</x>
-       <y>70</y>
+       <x>560</x>
+       <y>120</y>
        <width>80</width>
        <height>19</height>
       </rect>
@@ -111,8 +59,8 @@
     <widget class="QPushButton" name="offButton">
      <property name="geometry">
       <rect>
-       <x>440</x>
-       <y>100</y>
+       <x>560</x>
+       <y>150</y>
        <width>80</width>
        <height>19</height>
       </rect>
@@ -120,6 +68,289 @@
      <property name="text">
       <string>Power Off</string>
      </property>
+    </widget>
+    <widget class="QPushButton" name="statusButton">
+     <property name="geometry">
+      <rect>
+       <x>560</x>
+       <y>200</y>
+       <width>80</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Status</string>
+     </property>
+    </widget>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>70</y>
+       <width>471</width>
+       <height>331</height>
+      </rect>
+     </property>
+     <property name="currentIndex">
+      <number>2</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Static Colour</string>
+      </attribute>
+      <widget class="QPushButton" name="selectColorButton">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>120</y>
+         <width>141</width>
+         <height>71</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Select color</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="musicMode">
+       <property name="geometry">
+        <rect>
+         <x>300</x>
+         <y>150</y>
+         <width>59</width>
+         <height>19</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Music mode</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Built-in Modes</string>
+      </attribute>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>110</y>
+         <width>38</width>
+         <height>13</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Mode:</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="mode">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>110</y>
+         <width>42</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="minimum">
+        <number>37</number>
+       </property>
+       <property name="maximum">
+        <number>56</number>
+       </property>
+       <property name="displayIntegerBase">
+        <number>16</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_3">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>110</y>
+         <width>38</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>255
+(Slowest)</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_2">
+       <property name="geometry">
+        <rect>
+         <x>410</x>
+         <y>110</y>
+         <width>38</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>1
+(Fastest)</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QSlider" name="speed">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>120</y>
+         <width>160</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>255</number>
+       </property>
+       <property name="value">
+        <number>124</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="invertedAppearance">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="speedDisplay">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>140</y>
+         <width>161</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>124 (0x7C)</string>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="speedLabel">
+       <property name="geometry">
+        <rect>
+         <x>310</x>
+         <y>90</y>
+         <width>38</width>
+         <height>13</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Speed</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="applyBIButton">
+       <property name="geometry">
+        <rect>
+         <x>180</x>
+         <y>180</y>
+         <width>80</width>
+         <height>19</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Music Modes</string>
+      </attribute>
+      <widget class="QRadioButton" name="music1">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>50</y>
+         <width>68</width>
+         <height>19</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Classic</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">musicGroup</string>
+       </attribute>
+      </widget>
+      <widget class="QRadioButton" name="music2">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>80</y>
+         <width>68</width>
+         <height>19</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Soft</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">musicGroup</string>
+       </attribute>
+      </widget>
+      <widget class="QRadioButton" name="music3">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>110</y>
+         <width>68</width>
+         <height>19</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Dynamic</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">musicGroup</string>
+       </attribute>
+      </widget>
+      <widget class="QRadioButton" name="music4">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>140</y>
+         <width>68</width>
+         <height>19</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Disco</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">musicGroup</string>
+       </attribute>
+      </widget>
+      <widget class="QPushButton" name="applyMusic">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>200</y>
+         <width>80</width>
+         <height>19</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </widget>
     </widget>
    </widget>
   </widget>
@@ -137,4 +368,7 @@
  </widget>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="musicGroup"/>
+ </buttongroups>
 </ui>

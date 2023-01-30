@@ -24,6 +24,8 @@ public slots:
   void clickColorButton();
   void error(QString message);
   void info(QString message);
+  void applyBuiltInMode();
+  void applyMusicMode();
 
 private:
   Ui::MainWindow *ui;

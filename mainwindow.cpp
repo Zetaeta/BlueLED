@@ -7,13 +7,25 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
-  connect(ui->inputR, &QSpinBox::valueChanged, this, &MainWindow::updateR);
-  connect(ui->inputG, &QSpinBox::valueChanged, this, &MainWindow::updateG);
-  connect(ui->inputB, &QSpinBox::valueChanged, this, &MainWindow::updateB);
+  ui->mode->setMaximum(BluetoothInterface::numModes - 1);
+  ui->mode->setMinimum(0);
+  ui->mode->setDisplayIntegerBase(10);
+  ui->mode->setValue(0);
   connect(ui->btDialogButton, &QPushButton::clicked, this,
           &MainWindow::clickBtButton);
   connect(ui->selectColorButton, &QPushButton::clicked, this,
           &MainWindow::clickColorButton);
+  connect(ui->applyBIButton, &QPushButton::clicked, this,
+          &MainWindow::applyBuiltInMode);
+  connect(ui->speed, &QSlider::valueChanged, this, [this](int value) {
+    ui->speedDisplay->setText(QString::number(value) + " (0x" +
+                              QString::number(value, 16) + ")");
+  });
+  QAbstractButton *musicModes[] = {ui->music1, ui->music2, ui->music3,
+                                   ui->music4};
+  for (int i = 0; i < 4; i++) {
+    ui->musicGroup->setId(musicModes[i], i);
+  }
   r = g = b = 0;
 }
 
@@ -60,6 +72,19 @@ void MainWindow::clickBtButton() {
           &BluetoothInterface::powerOn);
   connect(ui->offButton, &QAbstractButton::clicked, interface,
           &BluetoothInterface::powerOff);
+  connect(ui->statusButton, &QAbstractButton::clicked, interface,
+          &BluetoothInterface::status);
+  connect(ui->musicMode, &QCheckBox::stateChanged, this,
+          [interface, this](int state) {
+            info("changing music mode state");
+            if (state == Qt::Checked) {
+              interface->setMusicColorMode(true);
+            } else {
+              interface->setMusicColorMode(false);
+            }
+          });
+  connect(ui->applyMusic, &QPushButton::clicked, this,
+          &MainWindow::applyMusicMode);
 }
 
 void MainWindow::clickColorButton() {
@@ -69,6 +94,25 @@ void MainWindow::clickColorButton() {
   connect(dialog, &QColorDialog::currentColorChanged, interface.get(),
           &BluetoothInterface::setColor);
   dialog->show();
+}
+
+void MainWindow::applyBuiltInMode() {
+  int mode = ui->mode->value();
+  assert((mode >= 0 && mode < BluetoothInterface::numModes));
+  int speed = ui->speed->value();
+  assert((speed > 0 && speed <= 255));
+  if (interface == nullptr) {
+    error("No interface");
+    return;
+  }
+  interface->setModeNo(mode, speed);
+}
+void MainWindow::applyMusicMode() {
+  auto checked = ui->musicGroup->checkedId();
+  info("music mode " + QString::number(checked));
+  if (checked != -1) {
+    interface->setMusicMode(checked);
+  }
 }
 
 void MainWindow::error(QString message) {
