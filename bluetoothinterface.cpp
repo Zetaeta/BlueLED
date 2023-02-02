@@ -108,13 +108,22 @@ void BluetoothInterface::writeStateChanged(
     error("missing service");
     return;
   }
-  this->info("service state: " + QString::number(service->state()));
-  if (service->state() != QLowEnergyService::RemoteServiceDiscovered) {
+  // auto state = service->state();
+  this->info("service state: " + QString::number(state));
+  BluetoothInterface::ConnectionState this_state;
+  if (state != QLowEnergyService::RemoteServiceDiscovered) {
     ready = false;
     info("not ready");
-    return;
+    if (state == QLowEnergyService::InvalidService) {
+      this_state = BluetoothInterface::Error;
+    } else {
+      this_state = BluetoothInterface::Connecting;
+    }
+  } else {
+    ready = true;
+    this_state = BluetoothInterface::Connected;
   }
-  ready = true;
+  emit stateChanged(this_state);
 }
 void BluetoothInterface::readStateChanged(
     QLowEnergyService::ServiceState state) {

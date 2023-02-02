@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "bluetoothdialog.h"
+#include "btdbusinterface.h"
 #include <QColorDialog>
+#include <QDBusConnection>
 #include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -66,6 +68,17 @@ void MainWindow::clickBtButton() {
     error("No interface");
     return;
   }
+  connect(interface.get(), &BluetoothInterface::stateChanged, this,
+          &MainWindow::interfaceStatus);
+}
+
+void MainWindow::interfaceStatus(BluetoothInterface::ConnectionState state) {
+  if (state == BluetoothInterface::Connected) {
+    enableControls();
+  }
+}
+
+void MainWindow::enableControls() {
   auto interface = this->interface.get();
   ui->controls->setEnabled(true);
   connect(ui->onButton, &QAbstractButton::clicked, interface,
@@ -85,6 +98,11 @@ void MainWindow::clickBtButton() {
           });
   connect(ui->applyMusic, &QPushButton::clicked, this,
           &MainWindow::applyMusicMode);
+  auto dbusInt = new BtDBusInterface(interface, this);
+  QDBusConnection::sessionBus().registerObject("/", this);
+  if (!QDBusConnection::sessionBus().registerService(SERVICE_NAME)) {
+    error("failed to register");
+  }
 }
 
 void MainWindow::clickColorButton() {

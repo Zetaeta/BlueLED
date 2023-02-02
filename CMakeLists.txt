@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Bluetooth)
+find_package(Qt6 REQUIRED COMPONENTS DBus)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -22,6 +23,7 @@ set(PROJECT_SOURCES
         bluetoothdialog.ui
         bluetoothinterface.h
         bluetoothinterface.cpp
+        btdbusinterface.h btdbusinterface.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -48,7 +50,7 @@ else()
 endif()
 
 target_link_libraries(bluetooth_ledstrips PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(bluetooth_ledstrips PRIVATE Qt${QT_VERSION_MAJOR}::Bluetooth)
+target_link_libraries(bluetooth_ledstrips PRIVATE Qt${QT_VERSION_MAJOR}::Bluetooth Qt6::DBus)
 
 set_target_properties(bluetooth_ledstrips PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
