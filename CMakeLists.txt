@@ -31,6 +31,13 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
+qt_add_executable(ledaemon
+    MANUAL_FINALIZATION
+    daemon.cpp
+    daemon.h
+    bluetoothinterface.h
+    bluetoothinterface.cpp
+)
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET bluetooth_ledstrips APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
@@ -51,6 +58,7 @@ endif()
 
 target_link_libraries(bluetooth_ledstrips PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(bluetooth_ledstrips PRIVATE Qt${QT_VERSION_MAJOR}::Bluetooth Qt6::DBus)
+target_link_libraries(ledaemon PRIVATE Qt6::Core Qt6::DBus Qt6::Bluetooth)
 
 set_target_properties(bluetooth_ledstrips PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

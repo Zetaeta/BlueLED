@@ -1,6 +1,8 @@
 #include "bluetoothinterface.h"
 #include <QBluetoothDeviceInfo>
+#ifdef QT_WIDGETS_LIB
 #include <QColor>
+#endif
 #include <QLowEnergyController>
 #include <QLowEnergyService>
 #include <iostream>
@@ -20,7 +22,7 @@ void BluetoothInterface::debug(const QString &message) {
 
 BluetoothInterface::BluetoothInterface(QObject *parent) : QObject{parent} {}
 
-BluetoothInterface::BluetoothInterface(QBluetoothDeviceInfo &device) {
+BluetoothInterface::BluetoothInterface(const QBluetoothDeviceInfo &device) {
   auto controller = QLowEnergyController::createCentral(device);
   connect(controller, &QLowEnergyController::errorOccurred, this,
           [this](QLowEnergyController::Error err) {
@@ -177,10 +179,19 @@ void BluetoothInterface::powerOff() {
   const char bytes[] = {'\xCC', '\x24', '\x33'};
   writeMessage(bytes);
 }
+
+#ifdef QT_WIDGETS_LIB
 void BluetoothInterface::setColor(const QColor &color) {
 
   info("Setting color: " + color.name());
   unsigned char r = color.red(), g = color.green(), b = color.blue();
+  setRgb(r, g, b);
+}
+#endif
+void BluetoothInterface::setRgb(int r, int g, int b) {
+  assert((r < 255 && g < 255 && b < 255));
+  assert(r >= 0 && g >= 0 && b >= 0);
+
   if (musicMode) {
     debug("music mode");
     const char bytes[] = {'\x78',
@@ -203,7 +214,6 @@ void BluetoothInterface::setColor(const QColor &color) {
   auto qb = QByteArray(bytes, sizeof(bytes));
   writeMessage(qb);
 }
-
 void BluetoothInterface::status() {
   const char bytes[] = {'\xEF', '\x01', '\x77'};
   auto qb = QByteArray(bytes, sizeof(bytes));

@@ -2,9 +2,9 @@
 #define BLUETOOTHINTERFACE_H
 
 #include <QByteArray>
-#include <QLowEnergyCharacteristic>
 #include <QLowEnergyService>
 #include <QObject>
+#include <QtBluetooth/QLowEnergyCharacteristic>
 QT_FORWARD_DECLARE_CLASS(QLowEnergyService)
 QT_FORWARD_DECLARE_CLASS(QLowEnergyController)
 QT_FORWARD_DECLARE_CLASS(QBluetoothDeviceInfo)
@@ -14,7 +14,7 @@ class BluetoothInterface : public QObject {
 public:
   explicit BluetoothInterface(QObject *parent = nullptr);
 
-  BluetoothInterface(QBluetoothDeviceInfo &info);
+  BluetoothInterface(const QBluetoothDeviceInfo &info);
 
   void error(QString message);
   void info(QString message);
@@ -29,7 +29,10 @@ public:
 signals:
   void stateChanged(ConnectionState state);
 public slots:
+#ifdef QT_WIDGETS_LIB
   void setColor(const QColor &color);
+#endif
+  void setRgb(int r, int g, int b);
   void powerOn();
   void powerOff();
   void status();
