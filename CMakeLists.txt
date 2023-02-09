@@ -37,6 +37,7 @@ qt_add_executable(ledaemon
     daemon.h
     bluetoothinterface.h
     bluetoothinterface.cpp
+    btdbusinterface.h btdbusinterface.cpp
 )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET bluetooth_ledstrips APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

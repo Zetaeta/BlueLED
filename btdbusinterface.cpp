@@ -1,6 +1,5 @@
 #include "btdbusinterface.h"
 #include "bluetoothinterface.h"
-#include <QColor>
 
 BtDBusInterface::BtDBusInterface(BluetoothInterface *bt, QObject *parent)
     : QDBusAbstractAdaptor{parent}, bt(bt) {}
@@ -13,12 +12,11 @@ void BtDBusInterface::powerOn() {
 void BtDBusInterface::powerOff() { bt->powerOff(); }
 
 void BtDBusInterface::rgb(int r, int g, int b) {
-  auto color = QColor(r, g, b);
-  if (!color.isValid()) {
+  if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
     bt->error("invalid color");
     return;
   }
-  bt->setColor(color);
+  bt->setRgb(r, g, b);
 }
 
 void BtDBusInterface::setMode(int mode, int speed) {

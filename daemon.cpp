@@ -28,10 +28,12 @@ void Daemon::initialize() {
   } else {
     this->address = address.toString();
   }
+  discoveryAgent->start();
 }
 
 void Daemon::deviceDiscovered(const QBluetoothDeviceInfo &info) {
   auto deviceAddress = info.address();
+  qInfo() << "found device with address " << deviceAddress;
   if (!deviceAddress.toString().contains(this->address)) {
     return;
   }
