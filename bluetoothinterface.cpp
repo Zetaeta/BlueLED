@@ -1,5 +1,6 @@
 #include "bluetoothinterface.h"
 #include <QBluetoothDeviceInfo>
+#include <QDebug>
 #ifdef QT_WIDGETS_LIB
 #include <QColor>
 #endif
@@ -16,64 +17,64 @@ const QBluetoothUuid STATUS_CHAR(quint16(0xffd4));
 const QBluetoothUuid WRITE_SERVICE(quint16(0xffd5));
 const QBluetoothUuid READ_SERVICE(quint16(0xffd0));
 
-void BluetoothInterface::debug(const QString &message) {
-  cout << message.toStdString() << std::endl;
-}
+void BluetoothInterface::debug(const QString &message) { qDebug() << message; }
 
 BluetoothInterface::BluetoothInterface(QObject *parent) : QObject{parent} {}
 
 BluetoothInterface::BluetoothInterface(const QBluetoothDeviceInfo &device) {
-  auto controller = QLowEnergyController::createCentral(device);
+  controller = QLowEnergyController::createCentral(device);
   connect(controller, &QLowEnergyController::errorOccurred, this,
           [this](QLowEnergyController::Error err) {
             Q_UNUSED(err);
             this->error("Cannot connect to remote device.");
           });
   connect(controller, &QLowEnergyController::serviceDiscovered, (this),
-          [this, controller](const QBluetoothUuid &gatt) {
-            auto *service = controller->createServiceObject(gatt);
-            if (service->serviceUuid() == WRITE_SERVICE) {
-              info("write service");
-              this->writeService = service;
-              connect(service, &QLowEnergyService::stateChanged, this,
-                      &BluetoothInterface::writeStateChanged);
-            } else if (service->serviceUuid() == READ_SERVICE) {
-              this->readService = service;
-              connect(service, &QLowEnergyService::stateChanged, this,
-                      &BluetoothInterface::readStateChanged);
-            }
-            service->discoverDetails();
-            info("discovering details");
+          &BluetoothInterface::serviceDiscovered);
 
-            this->info(QString("Service: ") +
-                       QString::number(gatt.toUInt32(), 16));
-            auto chars = service->characteristics();
-            connect(service, &QLowEnergyService::errorOccurred, this,
-                    [this](QLowEnergyService::ServiceError error) {
-                      this->error("Service error: " + QString::number(error));
-                    });
-            connect(service, &QLowEnergyService::characteristicChanged, this,
-                    &BluetoothInterface::receiveStatus);
-
-            for (auto c : chars) {
-              this->info(QString("Characteristic: ") + c.uuid().toString());
-              if (c.uuid() == WRITE_CHAR) {
-                this->writeChar = c;
-              } else if (c.uuid() == STATUS_CHAR) {
-                info("STATUS_CHAR");
-              }
-            }
-          });
-
-  connect(controller, &QLowEnergyController::connected, this,
-          [this, controller]() {
-            info("Controller connected. Search services...");
-            controller->discoverServices();
-          });
+  connect(controller, &QLowEnergyController::connected, this, [this]() {
+    info("Controller connected. Search services...");
+    controller->discoverServices();
+  });
   connect(controller, &QLowEnergyController::disconnected, this,
           [this]() { error("LowEnergy controller disconnected"); });
   controller->connectToDevice();
 }
+
+void BluetoothInterface::serviceDiscovered(const QBluetoothUuid &gatt) {
+  auto *service = controller->createServiceObject(gatt);
+  if (service->serviceUuid() == WRITE_SERVICE) {
+    info("write service");
+    this->writeService = service;
+    connect(service, &QLowEnergyService::stateChanged, this,
+            &BluetoothInterface::writeStateChanged);
+
+  } else if (service->serviceUuid() == READ_SERVICE) {
+    this->readService = service;
+    connect(service, &QLowEnergyService::stateChanged, this,
+            &BluetoothInterface::readStateChanged);
+  }
+  service->discoverDetails();
+  info("discovering details");
+
+  this->info(QString("Service: ") + QString::number(gatt.toUInt32(), 16));
+  auto chars = service->characteristics();
+  connect(service, &QLowEnergyService::errorOccurred, this,
+          [this](QLowEnergyService::ServiceError error) {
+            this->error("Service error: " + QString::number(error));
+          });
+  connect(service, &QLowEnergyService::characteristicChanged, this,
+          &BluetoothInterface::receiveStatus);
+
+  for (auto c : chars) {
+    this->info(QString("Characteristic: ") + c.uuid().toString());
+    if (c.uuid() == WRITE_CHAR) {
+      this->writeChar = c;
+    } else if (c.uuid() == STATUS_CHAR) {
+      info("STATUS_CHAR");
+    }
+  }
+}
+
 void BluetoothInterface::receiveStatus(
     const QLowEnergyCharacteristic &characteristic, const QByteArray &value) {
   debug("write to characteristic:" + characteristic.uuid().toString());
@@ -148,13 +149,15 @@ void BluetoothInterface::readStateChanged(
   service->writeDescriptor(cccd,
                            QLowEnergyCharacteristic::CCCDEnableNotification);
 }
-void BluetoothInterface::writeMessage(const QByteArray &bytes) {
-  auto service = this->writeService;
 
+void BluetoothInterface::writeMessage(const QByteArray &bytes) {
+  qDebug() << this;
+  auto service = this->writeService;
   if (!service) {
     error("missing service");
     return;
   }
+  qDebug() << service;
   if (service->state() == QLowEnergyService::RemoteServiceDiscovered &&
       writeChar.isValid()) {
     // sleep(1);
@@ -170,12 +173,13 @@ void BluetoothInterface::writeMessage(const QByteArray &bytes) {
   }
 }
 void BluetoothInterface::powerOn() {
-
+  debug("BI::powerOn");
   const char bytes[] = {'\xCC', '\x23', '\x33'};
   writeMessage(bytes);
 }
 void BluetoothInterface::powerOff() {
 
+  debug("BI::powerOn");
   const char bytes[] = {'\xCC', '\x24', '\x33'};
   writeMessage(bytes);
 }
@@ -189,7 +193,7 @@ void BluetoothInterface::setColor(const QColor &color) {
 }
 #endif
 void BluetoothInterface::setRgb(int r, int g, int b) {
-  assert((r < 255 && g < 255 && b < 255));
+  assert((r <= 255 && g <= 255 && b <= 255));
   assert(r >= 0 && g >= 0 && b >= 0);
 
   if (musicMode) {

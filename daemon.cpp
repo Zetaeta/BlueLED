@@ -40,7 +40,9 @@ void Daemon::deviceDiscovered(const QBluetoothDeviceInfo &info) {
   if (interface != nullptr) {
     qWarning() << "already created interface";
   }
+  qDebug() << "making interface";
   interface = std::make_unique<BluetoothInterface>(info);
+  qDebug() << interface.get();
   auto dbusInt = new BtDBusInterface(interface.get(), this);
   QDBusConnection::sessionBus().registerObject("/", this);
   if (!QDBusConnection::sessionBus().registerService(SERVICE_NAME)) {

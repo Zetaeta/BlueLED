@@ -40,6 +40,7 @@ public slots:
   void readStateChanged(QLowEnergyService::ServiceState state);
   void receiveStatus(const QLowEnergyCharacteristic &characteristic,
                      const QByteArray &newValue);
+  void serviceDiscovered(const QBluetoothUuid &gatt);
   void builtInMode(quint8 mode, quint8 speed);
   void setModeNo(quint8 index, quint8 speed);
   void setMusicColorMode(bool mode);
@@ -48,9 +49,9 @@ public slots:
 private:
   bool ready = false;
   bool musicMode = false;
-  QLowEnergyService *writeService;
-  QLowEnergyService *readService;
-  QLowEnergyController *controller;
+  QLowEnergyService *writeService = nullptr;
+  QLowEnergyService *readService = nullptr;
+  QLowEnergyController *controller = nullptr;
   QLowEnergyCharacteristic writeChar;
   void writeMessage(const QByteArray &bytes);
   template <size_t N> inline void writeMessage(const char (&bytes)[N]) {
