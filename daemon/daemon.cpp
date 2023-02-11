@@ -1,7 +1,6 @@
 #include "daemon.h"
 #include "btdbusinterface.h"
 #include <QBluetoothDeviceDiscoveryAgent>
-#include <QCoreApplication>
 #include <QDBusConnection>
 #include <QSettings>
 #include <QtDebug>
@@ -51,10 +50,3 @@ void Daemon::deviceDiscovered(const QBluetoothDeviceInfo &info) {
 }
 
 void Daemon::finishedScan() { qDebug() << "scan finished"; }
-
-int main(int argc, char **argv) {
-  QCoreApplication app(argc, argv);
-  Daemon daemon;
-  daemon.initialize();
-  app.exec();
-}

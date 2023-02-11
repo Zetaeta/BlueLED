@@ -13,14 +13,16 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Bluetooth)
 find_package(Qt6 REQUIRED COMPONENTS DBus)
 
+include_directories(".")
+
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
-        bluetoothdialog.h
-        bluetoothdialog.cpp
-        bluetoothdialog.ui
+        app/main.cpp
+        app/mainwindow.cpp
+        app/mainwindow.h
+        app/mainwindow.ui
+        app/bluetoothdialog.h
+        app/bluetoothdialog.cpp
+        app/bluetoothdialog.ui
         bluetoothinterface.h
         bluetoothinterface.cpp
         btdbusinterface.h btdbusinterface.cpp
@@ -33,8 +35,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     )
 qt_add_executable(ledaemon
     MANUAL_FINALIZATION
-    daemon.cpp
-    daemon.h
+    daemon/daemon.cpp
+    daemon/daemon.h
+    daemon/main.cpp
     bluetoothinterface.h
     bluetoothinterface.cpp
     btdbusinterface.h btdbusinterface.cpp
